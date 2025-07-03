@@ -7,9 +7,10 @@ export async function DELETE(
 ) {
   try {
     await db.query("DELETE FROM layanan WHERE id = ?", [params.id]);
-    return NextResponse.json({ message: "Berhasil dihapus" });
+    return new Response(null, { status: 204 }); // 204: No Content
   } catch (error) {
-    return NextResponse.json({ error: "Gagal hapus" }, { status: 500 });
+    console.error("DELETE /api/admin/layanan/[id] error:", error);
+    return NextResponse.json({ error: "Gagal hapus layanan." }, { status: 500 });
   }
 }
 
@@ -22,11 +23,13 @@ export async function GET(
       params.id,
     ]);
     const layanan = Array.isArray(rows) ? rows[0] : null;
-    if (!layanan)
-      return NextResponse.json({ error: "Tidak ditemukan" }, { status: 404 });
+    if (!layanan) {
+      return NextResponse.json({ error: "Layanan tidak ditemukan." }, { status: 404 });
+    }
     return NextResponse.json(layanan);
   } catch (error) {
-    return NextResponse.json({ error: "Gagal ambil data" }, { status: 500 });
+    console.error("GET /api/admin/layanan/[id] error:", error);
+    return NextResponse.json({ error: "Gagal mengambil data layanan." }, { status: 500 });
   }
 }
 
@@ -40,8 +43,9 @@ export async function PUT(
       "UPDATE layanan SET nama = ?, deskripsi = ?, harga = ? WHERE id = ?",
       [nama, deskripsi, harga, params.id]
     );
-    return NextResponse.json({ message: "Berhasil diupdate" });
+    return NextResponse.json({ message: "Layanan berhasil diupdate." });
   } catch (error) {
-    return NextResponse.json({ error: "Gagal update" }, { status: 500 });
+    console.error("PUT /api/admin/layanan/[id] error:", error);
+    return NextResponse.json({ error: "Gagal mengupdate layanan." }, { status: 500 });
   }
 }
